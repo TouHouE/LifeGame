@@ -1,0 +1,213 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import element.Cell;
+import element.World;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class GameWindow extends JFrame {
+    public GameWindow(int windowSize, int worldSize, int cell) {
+        this.windowSize = windowSize;
+        this.worldSize = worldSize;
+        this.cellNum = cell + 2;
+        init();
+    }
+
+    private World world;
+    private final int BUTTON_H = 20;
+    private final boolean DEATH = false, ALIVE = true;
+    private int windowSize;
+    public int worldSize;
+    public int cellNum;
+
+    public ArrayList<ArrayList<Boolean>> reactCellsB = new ArrayList<>();
+    public ArrayList<ArrayList<Cell>> cells = new ArrayList<>();
+    public boolean Stop = true;
+    public int roundTime;
+
+    private void init() {
+        this.setDefaultCloseOperation(3);
+        this.setSize(windowSize, windowSize);
+        this.setVisible(true);
+        this.setLayout(null);
+        world = new World(worldSize);
+        this.add(world);
+        initCell();
+        initFuncBtn();
+    }
+/*
+    public void syncCellStat() {
+        for(int i = 1; i < cellNum - 1; ++i) {
+            for(int j = 1; j < cellNum - 1; ++j) {
+                reactCellsB[i][j] = cells[i][j].stat;
+            }
+        }
+    }
+*/
+    private void clear() {
+        for(int i = 1; i < cellNum - 1; ++i) {
+            for(int j = 1; j < cellNum - 1; ++j) {
+                //cells[i][j].clear();
+                cells.get(i).get(j).clear();
+                //reactCellsB[i][j] = false;
+                reactCellsB.get(i).set(j, false);
+            }
+        }
+    }
+
+    private void initCell() {
+        //cells = new Cell[cellNum - 2][cellNum - 2];
+        //reactCellsB = new boolean[cellNum][cellNum];
+        int x = 0, y = 0, cellSize = worldSize / (cellNum - 2);
+        System.out.printf("cell Size:%d\n", cellSize);
+
+        for(int i = 0; i < cellNum; ++i) {
+            for(int j = 0; j < cellNum; ++j) {
+
+                if(i < cellNum - 2 && j < cellNum - 2) {
+                    cells.add(new ArrayList<Cell>());
+                    cells.get(i).add(new Cell(DEATH));
+                    cells.get(i).get(j).setBackground(Color.WHITE);
+                    cells.get(i).get(j).setLocation(x, y);
+                    cells.get(i).get(j).setSize(cellSize, cellSize);
+                    cells.get(i).get(j).setVisible(true);
+                    cells.get(i).get(j).serial(i, j);
+                    world.add(cells.get(i).get(j));
+                    /*
+                    cells[i][j] = new Cell(DEATH);
+                    cells[i][j].setBackground(Color.WHITE);
+                    cells[i][j].setLocation(x, y);
+                    cells[i][j].setSize(cellSize, cellSize);
+                    cells[i][j].setVisible(true);
+                    cells[i][j].serial(i, j);
+                    world.add(cells[i][j]);
+                    */
+                }
+
+                reactCellsB.add(new ArrayList<Boolean>());
+                reactCellsB.get(i).add(DEATH);
+                //reactCellsB[i][j] = DEATH;
+                x += cellSize;
+            }
+            x = 0;
+            y += cellSize;
+        }
+    }
+
+    private void initFuncBtn() {
+        JButton STOP = new JButton("Stop");
+        STOP.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Stop = true;
+            }
+        });
+
+        JButton CLEAR = new JButton("Clear");
+        CLEAR.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Stop = true;
+                clear();
+            }
+        });
+
+        JButton START = new JButton("Start");
+        START.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Stop = false;
+            }
+        });
+
+        JButton RESET = new JButton("Reset");
+        RESET.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                roundTime = 1;
+                Stop = true;
+            }
+        });
+
+        JButton EXIT = new JButton("Exit");
+        EXIT.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        START.setLocation(worldSize, 0);
+        START.setSize(100, 20);
+
+        STOP.setLocation(worldSize, BUTTON_H * 1);
+        STOP.setSize(100, 20);
+
+        CLEAR.setLocation(worldSize, BUTTON_H * 2);
+        CLEAR.setSize(100, 20);
+
+        RESET.setLocation(worldSize, BUTTON_H * 3);
+        RESET.setSize(100, 20);
+
+        EXIT.setLocation(worldSize, BUTTON_H * 4);
+        EXIT.setSize(100, 20);
+
+        this.add(START);
+        this.add(STOP);
+        this.add(CLEAR);
+        this.add(RESET);
+        this.add(EXIT);
+
+    }
+
+    public boolean checkChange() {
+        ObservableList<ArrayList<Cell>> cellsObserver =  FXCollections.observableArrayList(cells);
+    }
+}
