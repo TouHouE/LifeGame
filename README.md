@@ -1,3 +1,3 @@
 # Side Project: Conway's Game of Life
 ## Execution screen
-![]("./execution_screen.png")
+![](https://github.com/TouHouE/LifeGame/blob/main/execution_screen.png)
